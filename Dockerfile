@@ -1,13 +1,10 @@
 FROM php:8.2-apache
 
-# ติดตั้งส่วนเสริมฐานข้อมูล
+# ติดตั้งส่วนเสริมฐานข้อมูลที่จำเป็น
 RUN docker-php-ext-install mysqli pdo_mysql
 
-# คัดลอกไฟล์คอนฟิก Apache ที่เราสร้างขึ้นใหม่ ไปแทนที่ค่าเดิม
-COPY default.conf /etc/apache2/sites-available/000-default.conf
-RUN echo "Listen 8080" >> /etc/apache2/ports.conf
-
-# คัดลอกไฟล์โปรเจกต์ทั้งหมด
+# คัดลอกไฟล์โปรเจกต์ทั้งหมดเข้า Document Root
 COPY . /var/www/html/
 
+# เปิดใช้งานพอร์ต 8080 สำหรับ Railway
 EXPOSE 8080
