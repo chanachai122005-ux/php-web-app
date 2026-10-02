@@ -1,12 +1,14 @@
 FROM php:8.2-apache
 
-# ติดตั้งส่วนเสริม mysqli และ pdo_mysql
 RUN docker-php-ext-install mysqli pdo_mysql
 
-# คัดลอกไฟล์โปรเจกต์ทั้งหมดไปยังโฟลเดอร์เว็บของ Apache
+# คัดลอกไฟล์ทั้งหมดไปที่ /var/www/html/
 COPY . /var/www/html/
 
-# ใช้คำสั่งเปลี่ยนพอร์ตเริ่มต้นของ Apache 80 เป็น 8080 ในไฟล์หลักทีเดียวจบ
+# สั่งเปลี่ยนพอร์ตในคอนฟิกของ Apache เป็น 8080 ให้ครบทุกจุด
 RUN sed -i 's/80/8080/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+
+# กำหนดตัวแปรพอร์ตให้ Apache รันบน 8080
+ENV APACHE_PORT=8080
 
 EXPOSE 8080
