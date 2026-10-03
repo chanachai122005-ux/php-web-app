@@ -1,16 +1,21 @@
 <?php
-// ไฟล์เชื่อมต่อฐานข้อมูล MySQL (ดึงค่าจาก Environment Variables ของ Railway)
-$host = getenv('MYSQLHOST') ?: 'localhost';
-$user = getenv('MYSQLUSER') ?: 'root';
-$pass = getenv('MYSQLPASSWORD') ?: '';
-$dbname = getenv('MYSQLDATABASE') ?: 'test';
-$port = getenv('MYSQLPORT') ?: '3306';
+$host = getenv('DB_HOST');
+$port = getenv('DB_PORT');
+$db   = getenv('DB_NAME');
+$user = getenv('DB_USER');
+$pass = getenv('DB_PASSWORD');
 
-$conn = new mysqli($host, $user, $pass, $dbname, $port);
-
-// ตรวจสอบการเชื่อมต่อ
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec("CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        email VARCHAR(255),
+        phone VARCHAR(50)
+    ) CHARACTER SET utf8mb4");
+    $status = "Connected to MySQL Server successfully! (Host: $host, Port: $port, Table: users)";
+} catch (PDOException $e) {
+    $pdo = null;
+    $status = "Connection failed: " . $e->getMessage();
 }
-$conn->set_charset("utf8");
-?>
